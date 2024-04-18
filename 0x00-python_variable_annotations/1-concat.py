@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-This module contais the concat method using typping annotaions
+This module contais the concat method using typing annotaions
 """
 
 
