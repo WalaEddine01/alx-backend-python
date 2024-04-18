@@ -7,5 +7,6 @@ from typing import Tuple
 
 def to_kv(k: str, v: float | int) -> Tuple:
     """
+    to_kv method
     """
     return (k, float((v * v)))
