@@ -1,5 +1,3 @@
 #!/usr/bin/env python3
-add = __import__('0-add').add
-
-print(add(1.11, 2.22) == 1.11 + 2.22)
-print(add.__annotations__)
+a = __import__('4-define_variables').a
+print("a is a {} with a value of {}".format(type(a), a))
