@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """
+This module contains the wait_n method
 """
 wait_random = __import__('0-basic_async_syntax').wait_random
 
