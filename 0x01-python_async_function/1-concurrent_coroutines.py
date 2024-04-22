@@ -3,9 +3,10 @@
 This module contains the wait_n method
 """
 wait_random = __import__('0-basic_async_syntax').wait_random
+from typing import List
 
 
-async def wait_n(n, max_delay):
+async def wait_n(n: int, max_delay: int) -> List[float]:
     """
     this is wait_n method
     """
