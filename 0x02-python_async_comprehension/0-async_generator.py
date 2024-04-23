@@ -4,9 +4,10 @@ This Module contains the async_generator coroutine
 """
 import asyncio
 import random
+from typing import AsyncGenerator
 
 
-async def async_generator():
+async def async_generator() -> AsyncGenerator:
     """
     the async_generator coroutine
     """
