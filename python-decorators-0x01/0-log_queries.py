@@ -11,8 +11,10 @@ from datetime import datetime
 
 def log_queries(func):
     def wrapper(*args, **kwargs):
+        print("Before logging")
         yield {**kwargs,
                "Time": str(datetime.now())}
+        print("After logging")
         func(**kwargs)
     return wrapper
 
