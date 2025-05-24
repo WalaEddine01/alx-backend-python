@@ -7,7 +7,6 @@ import sqlite3
 import functools
 from datetime import datetime
 
-#### decorator to lof SQL queries
 
 def log_queries(func):
     """
@@ -18,7 +17,6 @@ def log_queries(func):
     
     def wrapper(*args, **kwargs):
         try:
-            # Get the query from arguments
             logs = {"query": kwargs.get("query"), 'Time': str(datetime.now())}
             if not logs["query"]:
                 raise ValueError('Missing Query parameter')
@@ -38,5 +36,5 @@ def fetch_all_users(query):
     conn.close()
     return results
 
-#### fetch users while logging the query
+
 users = fetch_all_users(query="SELECT * FROM users")

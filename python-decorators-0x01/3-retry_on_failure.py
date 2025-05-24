@@ -50,7 +50,7 @@ def fetch_users_with_retry(conn):
     cursor.execute("SELECT * FROM users")
     return cursor.fetchall()
 
-# Example usage
+
 try:
     users = fetch_users_with_retry()
     print(users)

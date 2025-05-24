@@ -26,24 +26,20 @@ def transactional(func):
     """
     @functools.wraps(func)
     def wrapper(*args, **kwargs):
-        conn = args[0]  # Get the connection from the arguments
+        conn = args[0]
         try:
-            # Start transaction
+
             cursor = conn.cursor()
             cursor.execute("BEGIN TRANSACTION")
             
-            # Execute the function
             result = func(*args, **kwargs)
             
-            # Commit if successful
             conn.commit()
             return result
         except Exception as e:
-            # Rollback if error occurs
             conn.rollback()
             raise e
         finally:
-            # Ensure transaction is always ended
             cursor.execute("COMMIT")
     return wrapper
 
@@ -54,7 +50,6 @@ def update_user_email(conn, user_id, new_email):
     cursor.execute("UPDATE users SET email = ? WHERE id = ?", (new_email, user_id))
     return cursor.rowcount
 
-# Example usage
 try:
     rows_affected = update_user_email(user_id=1, new_email='Crawford_Cartwright@hotmail.com')
     print(f"Updated {rows_affected} row(s)")

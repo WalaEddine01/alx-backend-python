@@ -13,15 +13,12 @@ def cache_query(func):
     """
     @functools.wraps(func)
     def wrapper(*args, **kwargs):
-        # Get the query from arguments (assuming it's the first positional arg)
         query = args[0] if args else kwargs.get('query')
         
-        # Check if result is in cache
         if query in query_cache:
             print("Retrieving result from cache...")
             return query_cache[query]
         
-        # If not in cache, execute the query and store result
         print("Executing query...")
         result = func(*args, **kwargs)
         query_cache[query] = result
@@ -52,9 +49,6 @@ def fetch_users_with_cache(conn, query):
     cursor.execute(query)
     return cursor.fetchall()
 
-# Example usage
-# First call will cache the result
 users = fetch_users_with_cache(query="SELECT * FROM users")
 
-# Second call will use the cached result
 users_again = fetch_users_with_cache(query="SELECT * FROM users")
