@@ -10,12 +10,23 @@ from datetime import datetime
 #### decorator to lof SQL queries
 
 def log_queries(func):
+    """
+    A decorator that logs SQL queries before they are executed.
+    Logs include the query string and current timestamp.
+    """
+    @functools.wraps(func)
+    
     def wrapper(*args, **kwargs):
-        print("Before logging")
-        yield {**kwargs,
-               "Time": str(datetime.now())}
-        print("After logging")
-        func(**kwargs)
+        try:
+            # Get the query from arguments
+            logs = {"query": kwargs.get("query"), 'Time': str(datetime.now())}
+            if not logs["query"]:
+                raise ValueError('Missing Query parameter')
+            print(logs)
+            return func(*args, **kwargs)
+        except Exception as e:
+            print(f"Error executing query: {str(e)}")
+            raise
     return wrapper
 
 @log_queries
