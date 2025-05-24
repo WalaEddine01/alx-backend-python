@@ -25,15 +25,12 @@ class DatabaseConnection:
     def __exit__(self, exc_type, exc_val, exc_tb):
         """Clean up resources when exiting the 'with' block"""
         if exc_type:
-            # If an error occurred, rollback the transaction
             if self.connection:
                 self.connection.rollback()
         else:
-            # If no error occurred, commit the transaction
             if self.connection:
                 self.connection.commit()
         
-        # Close the cursor and connection
         if self.cursor:
             self.cursor.close()
         if self.connection:
@@ -54,10 +51,8 @@ class DatabaseConnection:
 # Example usage
 try:
     with DatabaseConnection() as db:
-        # Execute the query
         results = db.execute_query("SELECT * FROM users")
         
-        # Print the results
         for row in results:
             print(row)
 except sqlite3.Error as e:

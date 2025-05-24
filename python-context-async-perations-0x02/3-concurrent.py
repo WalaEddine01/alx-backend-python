@@ -18,13 +18,11 @@ async def async_fetch_older_users():
 async def fetch_concurrently():
     """Execute both queries concurrently using asyncio.gather"""
     try:
-        # Execute both queries concurrently
         users, older_users = await asyncio.gather(
             async_fetch_users(),
             async_fetch_older_users()
         )
         
-        # Print results
         print("All users:")
         for user in users:
             print(user)
@@ -36,5 +34,4 @@ async def fetch_concurrently():
     except aiosqlite.Error as e:
         print(f"Database error: {e}")
 
-# Run the concurrent fetch
 asyncio.run(fetch_concurrently())
