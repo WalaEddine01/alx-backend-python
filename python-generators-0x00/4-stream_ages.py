@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 
 import mysql.connector
-from typing import Iterator, List, Dict
+from typing import Iterator, Optional
 
 def connect_db() -> mysql.connector.connection.MySQLConnection:
     """Establish database connection."""
@@ -12,40 +12,39 @@ def connect_db() -> mysql.connector.connection.MySQLConnection:
         database='ALX_prodev'
     )
 
-def paginate_users(page_size: int, offset: int = 0) -> List[Dict]:
+def stream_user_ages() -> Iterator[Optional[float]]:
     """
-    Fetches a page of users from the database.
+    Generator function that yields user ages one by one.
     
-    Args:
-        page_size: Number of records to fetch
-        offset: Starting position for the query (default: 0)
-        
-    Returns:
-        List[Dict]: List of user dictionaries
+    Yields:
+        float: Age of each user, or None if no more rows
     """
     connection = connect_db()
-    cursor = connection.cursor(dictionary=True)
+    cursor = connection.cursor()
     
     try:
-        query = "SELECT * FROM user_data LIMIT %s OFFSET %s"
-        cursor.execute(query, (page_size, offset))
-        return cursor.fetchall()
+        cursor.execute("SELECT age FROM user_data")
+        while True:
+            age = cursor.fetchone()
+            if not age:
+                break
+            yield age[0]  # Yield just the age value
     finally:
         cursor.close()
         connection.close()
 
-def lazy_paginate(page_size: int) -> Iterator[List[Dict]]:
+def calculate_average_age() -> float:
     """
-    Generator function that implements lazy pagination.
+    Calculate the average age using the generator without loading all data into memory.
     
-    Args:
-        page_size: Number of records per page
-        
-    Yields:
-        List[Dict]: List of user dictionaries for each page
+    Returns:
+        float: Average age of all users
     """
-    while True:
-        page = paginate_users(page_size)
-        if not page:
-            break
-        yield page
+    total = 0
+    count = 0
+    
+    for age in stream_user_ages():
+        total += age
+        count += 1
+    
+    return total / count if count > 0 else 0.0
