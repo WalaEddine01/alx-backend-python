@@ -38,6 +38,3 @@ class TestAccessNestedMap(TestCase):
         1
         """
         self.assertEqual(access_nested_map(input[0], input[1]), expe_output)
-
-    
-
