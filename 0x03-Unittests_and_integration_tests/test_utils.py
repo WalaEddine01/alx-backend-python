@@ -40,12 +40,13 @@ class TestAccessNestedMap(TestCase):
         """
         self.assertEqual(access_nested_map(input[0], input[1]), expe_output)
 
-    @parameterized.expand([(({}, "a"), 1),
-                           (({"a": 1}, ["a", "b"]), 2)])
+    @parameterized.expand([(({}, "a")),
+                           (({"a": 1}, ["a", "b"]))])
     def test_access_nested_map_exception(self,
                                          input: tuple,
                                          expe_output: Any) -> None:
         """
         Test access_nested_map function with inputs that should raise KeyError.
         """
-        self.assertRaises(TypeError)
+        with self.assertRaises(KeyError):
+            access_nested_map(input[0], input[0])
