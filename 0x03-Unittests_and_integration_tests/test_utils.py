@@ -53,12 +53,11 @@ class TestAccessNestedMap(TestCase):
         with self.assertRaises(KeyError):
             access_nested_map(input[0], input[0])
 
-    @patch("requests.get")
+    @patch("req.requests.get")
     @parameterized.expand([("http://example.com", {"payload": True}),
                            ("http://holberton.io", {"payload": False})])
     def TestGetJson(self, test_url: str, test_payload: dict) -> None:
         mock_response = Mock()
         mock_response.json.return_value = test_payload
-        with patch("requests.get", return_value=mock_response) as mock_get:
-            result = get_json(test_url)
-            self.assertEqual(result, test_payload)
+        result = get_json(test_url) 
+        self.assertEqual(result, test_payload)
