@@ -59,5 +59,5 @@ class TestAccessNestedMap(TestCase):
     def TestGetJson(self, test_url: str, test_payload: dict) -> None:
         mock_response = Mock()
         mock_response.json.return_value = test_payload
-        result = get_json(test_url) 
+        result = get_json(test_url)
         self.assertEqual(result, test_payload)
