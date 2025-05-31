@@ -60,7 +60,7 @@ class TestAccessNestedMap(TestCase):
         """
         """
         mock_response = Mock()
-        mock_response.json.return_value = test_payload
+        mock_response.json.return_value = test_url[1]
         
         result = get_json(test_url)
         self.assertEqual(result, test_payload)
