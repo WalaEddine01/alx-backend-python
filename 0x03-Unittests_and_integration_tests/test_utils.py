@@ -55,7 +55,7 @@ class TestAccessNestedMap(TestCase):
 
     @parameterized.expand([("http://example.com", {"payload": True}),
                            ("http://holberton.io", {"payload": False})])
-    def TestGetJson(self, url, test_payload):
+    def TestGetJson(self, url: str, test_payload: dict) -> None:
         """
         """
         mock_response = Mock()
