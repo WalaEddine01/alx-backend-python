@@ -2,7 +2,7 @@
 """
 This module contains test cases for the access_nested_map function.
 """
-from utils import access_nested_map
+from utils import access_nested_map, get_json
 from typing import (
     Mapping,
     Sequence,
@@ -11,7 +11,9 @@ from typing import (
     Callable,
 )
 from unittest import TestCase
+from unittest.mock import Mock, patch
 from parameterized import parameterized
+from fixtures import TEST_PAYLOAD
 
 
 class TestAccessNestedMap(TestCase):
@@ -50,3 +52,15 @@ class TestAccessNestedMap(TestCase):
         """
         with self.assertRaises(KeyError):
             access_nested_map(input[0], input[0])
+
+    @parameterized.expand([("http://example.com", {"payload": True}),
+                           ("http://holberton.io", {"payload": False})])
+    def TestGetJson(self, url, test_payload):
+        """
+        """
+        mock_response = Mock()
+        mock_response.json.return_value = test_payload
+
+        with patch("requests.get", return_value=mock_response):
+            result = get_json(url)
+            self.assertEqual(result, test_payload)
