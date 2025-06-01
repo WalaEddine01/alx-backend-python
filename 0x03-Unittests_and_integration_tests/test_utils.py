@@ -2,7 +2,7 @@
 """
 This module contains test cases for the access_nested_map function.
 """
-from utils import access_nested_map, get_json
+from utils import access_nested_map, get_json, memoize
 from typing import (
     Mapping,
     Sequence,
@@ -10,6 +10,7 @@ from typing import (
     Dict,
     Callable,
 )
+
 from unittest import TestCase
 from unittest.mock import Mock, patch
 from parameterized import parameterized
@@ -61,7 +62,8 @@ class TestGetJson(TestCase):
     @parameterized.expand([("http://example.com", {"payload": True}),
                            ("http://holberton.io", {"payload": False})])
     @patch('requests.get')
-    def test_get_json(self, test_url, test_payload, mock_get):
+    def test_get_json(self, test_url: str,
+                      test_payload: dict, mock_get: Any) -> None:
         mock_response = Mock()
         mock_response.json.return_value = test_payload
         mock_get.return_value = mock_response
@@ -69,3 +71,31 @@ class TestGetJson(TestCase):
         result = get_json(test_url)
         self.assertEqual(result, test_payload)
         mock_get.assert_called_with(test_url)
+
+
+class TestMemoize(TestCase):
+    """
+    """
+    def test_memoize(self):
+        """
+        """
+        class TestClass:
+            """
+            """
+            def a_method(self):
+                """
+                """
+                return 42
+
+            @memoize
+            def a_property(self):
+                """
+                """
+                return self.a_method()
+
+        testClassInstance = TestClass()
+        mock_response = Mock()
+        mock_response.json.return_value = 42
+
+        result = testClassInstance.a_property
+        self.assertEqual(result, 42)
