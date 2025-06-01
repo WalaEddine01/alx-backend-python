@@ -89,12 +89,14 @@ class TestGetJson(TestCase):
 class TestMemoize(TestCase):
     """
     Test cases for memoize decorator.
-    This decorator caches the result of a method to avoid redundant calculations.
+    This decorator caches the result of a method
+    to avoid redundant calculations.
     """
     def test_memoize(self):
         """
         Test memoize decorator with a simple class method.
-        This test checks if the method is called only once and the result is cached.
+        This test checks if the method is called only once
+        and the result is cached.
         """
         class TestClass:
             """
