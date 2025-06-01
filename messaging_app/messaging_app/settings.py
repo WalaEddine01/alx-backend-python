@@ -48,7 +48,6 @@ INSTALLED_APPS = [
     'rest_framework',
     'corsheaders',
     'chats',
-    'users'
 ]
 CORS_ALLOW_ALL_ORIGINS = True
 
@@ -135,4 +134,4 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-AUTH_USER_MODEL = 'users.CustomUser'
+AUTH_USER_MODEL = 'chats.CustomUser'
