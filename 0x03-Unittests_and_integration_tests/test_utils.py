@@ -58,12 +58,25 @@ class TestAccessNestedMap(TestCase):
 
 class TestGetJson(TestCase):
     """
+    Test cases for get_json function.
+    This function retrieves JSON data from a given URL.
     """
     @parameterized.expand([("http://example.com", {"payload": True}),
                            ("http://holberton.io", {"payload": False})])
     @patch('requests.get')
     def test_get_json(self, test_url: str,
                       test_payload: dict, mock_get: Any) -> None:
+        """
+        Test get_json function with various URLs and payloads.
+        Parameters
+        ----------
+        test_url: str
+            The URL to fetch JSON data from.
+        test_payload: dict
+            The expected JSON payload to be returned.
+        mock_get: Mock
+            Mock object to simulate requests.get behavior.
+        """
         mock_response = Mock()
         mock_response.json.return_value = test_payload
         mock_get.return_value = mock_response
@@ -75,21 +88,28 @@ class TestGetJson(TestCase):
 
 class TestMemoize(TestCase):
     """
+    Test cases for memoize decorator.
+    This decorator caches the result of a method to avoid redundant calculations.
     """
     def test_memoize(self):
         """
+        Test memoize decorator with a simple class method.
+        This test checks if the method is called only once and the result is cached.
         """
         class TestClass:
             """
+            A simple class to test the memoize decorator.
             """
             def a_method(self):
                 """
+                A method that returns a constant value.
                 """
                 return 42
 
             @memoize
             def a_property(self):
                 """
+                A property that uses the memoize decorator.
                 """
                 return self.a_method()
 
@@ -97,5 +117,5 @@ class TestMemoize(TestCase):
         mock_response = Mock()
         mock_response.json.return_value = 42
 
-        result = testClassInstance.a_property
+        result = testClassInstance.a_method()
         self.assertEqual(result, 42)
