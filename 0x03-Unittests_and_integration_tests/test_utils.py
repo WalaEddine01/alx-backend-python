@@ -92,7 +92,7 @@ class TestMemoize(TestCase):
     This decorator caches the result of a method
     to avoid redundant calculations.
     """
-    def test_memoize(self):
+    def test_memoize(self) -> None:
         """
         Test memoize decorator with a simple class method.
         This test checks if the method is called only once
@@ -116,8 +116,9 @@ class TestMemoize(TestCase):
                 return self.a_method()
 
         testClassInstance = TestClass()
-        mock_response = Mock()
-        mock_response.json.return_value = 42
+        with patch.object(testClassInstance, "a_method",
+                          return_value=200) as mock_method:
+            result = testClassInstance.a_property
 
-        result = testClassInstance.a_method()
-        self.assertEqual(result, 42)
+            self.assertEqual(result, 200)
+            mock_method.assert_called_once()
