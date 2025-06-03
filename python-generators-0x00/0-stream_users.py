@@ -1,39 +1,32 @@
 #!/usr/bin/python3
-import mysql.connector
-from typing import Iterator, Dict
+from mysql import connector
+from os import getenv
+from dotenv import load_dotenv
+from itertools import islice
 
-def connect_db() -> mysql.connector.connection.MySQLConnection:
-    """Connect to MySQL database."""
-    return mysql.connector.connect(
-        host='localhost',
-        user='root',
-        password='',
-        database='ALX_prodev'
+
+load_dotenv()
+def stream_users():
+    """
+    """
+    connection = connector.connect(
+        host=getenv("MYSQL_HOST"),
+        port=getenv("MYSQL_PORT"),
+        user=getenv("MYSQL_USER"),
+        password=getenv("MYSQL_PASSWORD"),
+        database=getenv("MYSQL_DB")
     )
-
-def stream_users() -> Iterator[Dict]:
-    """
-    Generator function that streams users one by one from the database.
-    
-    Yields:
-        dict: Dictionary containing user information
-    """
-    # Create connection and cursor
-    cnx = connect_db()
-    cursor = cnx.cursor(dictionary=True)
-    
-    try:
-        # Execute query
-        cursor.execute("SELECT * FROM user_data")
+    cursor = connection.cursor()
+    users = cursor.execute('SELECT * from user_data')
+    users = cursor.fetchall()
+    for user in users:
+        user = {'user_id': user[0], 'name': user[1], 'email': user[2], 'age': user[3]}
         
-        # Fetch and yield one row at a time
-        while True:
-            row = cursor.fetchone()
-            if not row:
-                break
-            yield dict(row)
-            
-    finally:
-        # Ensure cleanup happens even if there's an error
-        cursor.close()
-        cnx.close()
+        yield user
+    cursor.close()
+
+
+if __name__ == "__main__":
+    stream_users()
+    for user in islice(stream_users(), 6):
+        print(user)
