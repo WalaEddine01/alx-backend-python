@@ -1,51 +1,39 @@
 #!/usr/bin/python3
+from mysql import connector
+from mysql.connector import Error
+import seed
 
-import mysql.connector
-from typing import Iterator, List, Dict
 
-def connect_db() -> mysql.connector.connection.MySQLConnection:
-    """Establish database connection."""
-    return mysql.connector.connect(
-        host='localhost',
-        user='root',
-        password='',
-        database='ALX_prodev'
-    )
-
-def paginate_users(page_size: int, offset: int = 0) -> List[Dict]:
+def lazy_paginate(page_size):
     """
-    Fetches a page of users from the database.
-    
-    Args:
-        page_size: Number of records to fetch
-        offset: Starting position for the query (default: 0)
-        
-    Returns:
-        List[Dict]: List of user dictionaries
+    Generator that yields pages of users from the database using LIMIT/OFFSET.
     """
-    connection = connect_db()
-    cursor = connection.cursor(dictionary=True)
-    
-    try:
-        query = "SELECT * FROM user_data LIMIT %s OFFSET %s"
-        cursor.execute(query, (page_size, offset))
-        return cursor.fetchall()
-    finally:
-        cursor.close()
-        connection.close()
-
-def lazy_paginate(page_size: int) -> Iterator[List[Dict]]:
-    """
-    Generator function that implements lazy pagination.
-    
-    Args:
-        page_size: Number of records per page
-        
-    Yields:
-        List[Dict]: List of user dictionaries for each page
-    """
-    while True:
-        page = paginate_users(page_size)
-        if not page:
+    i = 1
+    while (True):
+        offset = page_size * (i - 1)
+        i += 1
+        try:
+            rows = paginate_users(page_size, offset)
+            if not rows:
+                break
+            yield rows
+        except Error as e:
+            print(f"Pagination failed: {e}")
             break
-        yield page
+
+
+def paginate_users(page_size, offset):
+    """
+    """
+    connection = seed.connect_to_prodev()
+    cursor = connection.cursor(dictionary=True)
+    cursor.execute("SELECT * FROM user_data LIMIT %s OFFSET %s",
+                   (page_size, offset))
+    rows = cursor.fetchall()
+    connection.close()
+    return rows
+
+
+if __name__ == "__main__":
+
+    print(lazy_paginate(100))
