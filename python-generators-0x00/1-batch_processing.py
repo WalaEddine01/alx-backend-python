@@ -48,7 +48,8 @@ def batch_processing(batch_size):
         user = {'user_id': users[i][0], 'name': users[i][1],
                 'email': users[i][2], 'age': users[i][3]}
 
-        print(user)
+        yield user
+        return user
     cursor.close()
 
 
