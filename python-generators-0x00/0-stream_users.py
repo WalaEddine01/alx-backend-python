@@ -3,11 +3,13 @@ from mysql import connector
 from os import getenv
 from dotenv import load_dotenv
 from itertools import islice
-
-
 load_dotenv()
+
+
 def stream_users():
     """
+     uses a generator to fetch rows one by one from the user_data table.
+     must use the Yield python generator.
     """
     connection = connector.connect(
         host=getenv("MYSQL_HOST"),
@@ -20,8 +22,9 @@ def stream_users():
     users = cursor.execute('SELECT * from user_data')
     users = cursor.fetchall()
     for user in users:
-        user = {'user_id': user[0], 'name': user[1], 'email': user[2], 'age': user[3]}
-        
+        user = {'user_id': user[0], 'name': user[1],
+                'email': user[2], 'age': user[3]}
+
         yield user
     cursor.close()
 
