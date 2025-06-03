@@ -42,14 +42,13 @@ def batch_processing(batch_size):
         database=getenv("MYSQL_DB")
     )
     cursor = connection.cursor()
-    users = cursor.execute('SELECT * FROM user_data WHERE age > 25 LIMIT %s', (batch_size, ))
+    cursor.execute('SELECT * FROM user_data WHERE age > 25 LIMIT %s', (batch_size, ))
     users = cursor.fetchall()
     for i in range(batch_size):
         user = {'user_id': users[i][0], 'name': users[i][1],
                 'email': users[i][2], 'age': users[i][3]}
 
         yield user
-        return user
     cursor.close()
 
 
