@@ -1,8 +1,9 @@
 #!/usr/bin/python3
-from itertools import islice
-stream_users = __import__('0-stream_users')
-stream_users = stream_users.stream_users
-# iterate over the generator function and print only the first 6 rows
+import sys
+processing = __import__('1-batch_processing')
 
-for user in islice(stream_users(), 6):
-    print(user)
+##### print processed users in a batch of 50
+try:
+    processing.batch_processing(50)
+except BrokenPipeError:
+    sys.stderr.close()
