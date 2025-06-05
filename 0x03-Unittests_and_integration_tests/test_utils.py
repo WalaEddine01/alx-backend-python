@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-This module contains test cases for the access_nested_map function.
+This module contains test cases
 """
 from utils import access_nested_map, get_json, memoize
 from typing import (
@@ -20,7 +20,7 @@ import requests
 
 class TestAccessNestedMap(TestCase):
     """
-    Test cases for access_nested_map function.
+    Test cases
     """
     @parameterized.expand([(({"a": 1}, "a"), 1),
                            (({"a": {"b": 2}}, "a"), {"b": 2}),
@@ -119,6 +119,8 @@ class TestMemoize(TestCase):
         with patch.object(testClassInstance, "a_method",
                           return_value=200) as mock_method:
             result = testClassInstance.a_property
+            result2 = testClassInstance.a_property
 
             self.assertEqual(result, 200)
+            self.assertEqual(result2, 200)
             mock_method.assert_called_once()
