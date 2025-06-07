@@ -2,20 +2,14 @@ from rest_framework import permissions
 from django.contrib.auth.models import User
 from .models import Conversation, Message
 
-class IsConversationParticipant(permissions.BasePermission):
-    def has_object_permission(self, request, view, obj):
-        if isinstance(obj, Conversation):
-            return request.user in obj.users.all()
-        elif isinstance(obj, Message):
-            return request.user in obj.conversation.users.all()
-        return False
-
+class IsParticipantOfConversation(permissions.BasePermission):
     def has_permission(self, request, view):
-        if request.method in permissions.SAFE_METHODS:
-            return True
-        
+        # Allow authenticated users only
+        if not request.user.is_authenticated:
+            return False
+            
         # For creating messages, check if user is in the conversation
-        if view.basename == 'message':
+        if request.method == 'POST' and view.basename == 'message':
             conversation_id = request.data.get('conversation')
             if not conversation_id:
                 return False
@@ -28,8 +22,16 @@ class IsConversationParticipant(permissions.BasePermission):
         
         return True
 
-class IsMessageSender(permissions.BasePermission):
     def has_object_permission(self, request, view, obj):
+        # Allow GET requests for participants
         if request.method in permissions.SAFE_METHODS:
-            return request.user in obj.conversation.users.all()
-        return obj.sender == request.user
+            if isinstance(obj, Conversation):
+                return request.user in obj.users.all()
+            elif isinstance(obj, Message):
+                return request.user in obj.conversation.users.all()
+            return False
+        
+        # For PUT/PATCH/DELETE operations
+        if isinstance(obj, Message):
+            return obj.sender == request.user
+        return False
