@@ -1,34 +1,23 @@
-import logging
-from datetime import datetime
+from datetime import datetime, time
+from django.http import HttpResponseForbidden
 from django.utils.deprecation import MiddlewareMixin
 
-class RequestLoggingMiddleware(MiddlewareMixin):
+class RestrictAccessByTimeMiddleware(MiddlewareMixin):
     def __init__(self, get_response):
         self.get_response = get_response
-        # Set up logging configuration
-        self.logger = logging.getLogger('request_logger')
-        self.logger.setLevel(logging.INFO)
-        
-        # Create file handler
-        handler = logging.FileHandler('requests.log')
-        handler.setLevel(logging.INFO)
-        
-        # Create formatter and add it to the handler
-        formatter = logging.Formatter('%(message)s')
-        handler.setFormatter(formatter)
-        
-        # Add handler to logger
-        self.logger.addHandler(handler)
+        # Set up allowed hours (6AM to 9PM)
+        self.allowed_start = time(6, 0)  # 6:00 AM
+        self.allowed_end = time(21, 0)   # 9:00 PM
 
     def __call__(self, request):
-        # Log request details
-        user = request.user.username if request.user.is_authenticated else 'Anonymous'
-        self.logger.info(f"{datetime.now()} - User: {user} - Path: {request.path}")
+        # Get current time
+        current_time = datetime.now().time()
         
-        # Process the request
-        response = self.get_response(request)
+        # Check if current time is outside allowed hours
+        if not (self.allowed_start <= current_time <= self.allowed_end):
+            return HttpResponseForbidden(
+                "Chat access is only available between 6AM and 9PM"
+            )
         
-        # Log response status
-        self.logger.info(f"{datetime.now()} - User: {user} - Path: {request.path} - Status: {response.status_code}")
-        
-        return response
+        # If time is within allowed range, continue with the request
+        return self.get_response(request)
