@@ -35,6 +35,7 @@ class TestGithubOrgClient(unittest.TestCase):
     @patch("client.get_json")
     def test_org(self, input: tuple, test_payload: Any, mock_get: Any) -> None:
         """
+        Test GithubOrgClient.org method.
         """
         githuborgclient = GithubOrgClient(input)
         mock_get.return_value = test_payload
@@ -49,6 +50,7 @@ class TestGithubOrgClient(unittest.TestCase):
                            ("abc", "https://api.github.com/orgs/abc/repos")])
     def test_public_repos_url(self, org_name: tuple, repos_url: Any) -> None:
         """
+        Test GithubOrgClient._public_repos_url property.
         """
         with patch.object(GithubOrgClient, 'GithubOrgClient.org ',
                           new_callable=PropertyMock) as mock_prop:
@@ -75,10 +77,10 @@ class TestGithubOrgClient(unittest.TestCase):
 
             client = GithubOrgClient("some_org")
             result = client.public_repos()
-
             self.assertEqual(result, ["repo1", "repo2", "repo3"])
             mock_url.assert_called_once()
-            mock_get_json.assert_called_once_with("https://fake.url/repos")
+            mock_get_json.assert_called_once_with(
+                "https://fake.url/repos")
 
     @parameterized.expand([
         ({"license": {"key": "my_license"}}, "my_license", True),
@@ -91,6 +93,7 @@ class TestGithubOrgClient(unittest.TestCase):
         """
         result = GithubOrgClient.has_license(repo, license_key)
         self.assertEqual(result, expected)
+
 
 @parameterized_class([
     {
@@ -109,7 +112,8 @@ class TestGithubOrgClient(unittest.TestCase):
     }
 ])
 class TestIntegrationGithubOrgClient(unittest.TestCase):
-    """Integration tests for GithubOrgClient using real logic but mocked HTTP."""
+    """Integration tests for GithubOrgClient using real
+    logic but mocked HTTP."""
 
     @classmethod
     def setUpClass(cls):
@@ -118,7 +122,8 @@ class TestIntegrationGithubOrgClient(unittest.TestCase):
         mock_get = cls.get_patcher.start()
 
         def side_effect(url, *args, **kwargs):
-            if url == cls.org_payload["url"]:  # likely something like .../orgs/google
+            """Mocked requests.get side effect."""
+            if url == cls.org_payload["url"]:
                 return MagicMock(json=lambda: cls.org_payload)
             elif url == cls.repos_payload[0]["url"]:
                 # repos_payload is list of dicts with a "url" key maybe
