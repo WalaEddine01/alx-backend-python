@@ -3,27 +3,16 @@
 This module contains test cases
 """
 import unittest
-from unittest.mock import Mock, PropertyMock
-from utils import access_nested_map, get_json, memoize
+from unittest.mock import PropertyMock, patch, MagicMock
 from typing import (
-    Mapping,
-    Sequence,
     Any,
-    Dict,
-    Callable,
 )
-from unittest import TestCase
-from unittest.mock import patch, MagicMock
 from parameterized import parameterized_class
 from fixtures import TEST_PAYLOAD
-import json
-import requests
 
 from client import GithubOrgClient
-from unittest.mock import Mock, patch
 from parameterized import parameterized
 from fixtures import TEST_PAYLOAD
-import requests
 
 
 class TestGithubOrgClient(unittest.TestCase):
