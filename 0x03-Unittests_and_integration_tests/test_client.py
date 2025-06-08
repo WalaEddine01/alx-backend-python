@@ -24,8 +24,8 @@ class TestGithubOrgClient(unittest.TestCase):
     """
     Test cases.
     """
-    @parameterized.expand([("google", {'TEST_PAYLOAD': True,}),
-                           ("abc", {'TEST_PAYLOAD': False,})])
+    @parameterized.expand([("google", {'TEST_PAYLOAD': True}),
+                           ("abc", {'TEST_PAYLOAD': False})])
     @patch("client.get_json")
     def test_org(self, input: tuple, test_payload: Any, mock_get: Any) -> None:
         """
@@ -35,9 +35,11 @@ class TestGithubOrgClient(unittest.TestCase):
 
         result = githuborgclient.org
         self.assertEqual(result, test_payload)
-        mock_get.assert_called_once_with(f"https://api.github.com/orgs/{input}")
+        mock_get.assert_called_once_with(
+            f"https://api.github.com/orgs/{input}")
 
-    @parameterized.expand([("google", "https://api.github.com/orgs/google/repos"),
+    @parameterized.expand([("google",
+                            "https://api.github.com/orgs/google/repos"),
                            ("abc", "https://api.github.com/orgs/abc/repos")])
     def test_public_repos_url(self, org_name: tuple, repos_url: Any) -> None:
         """
@@ -48,7 +50,7 @@ class TestGithubOrgClient(unittest.TestCase):
             githuborgclient = GithubOrgClient(input)
             result = githuborgclient._public_repos_url
             self.assertEqual(result, repos_url)
-    
+
     @patch("client.get_json")
     def test_public_repos(self, mock_get_json):
         """
@@ -61,7 +63,8 @@ class TestGithubOrgClient(unittest.TestCase):
         ]
         mock_get_json.return_value = fake_repos_payload
 
-        with patch("client.GithubOrgClient._public_repos_url", new_callable=PropertyMock) as mock_url:
+        with patch("client.GithubOrgClient._public_repos_url",
+                   new_callable=PropertyMock) as mock_url:
             mock_url.return_value = "https://fake.url/repos"
 
             client = GithubOrgClient("some_org")
