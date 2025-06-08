@@ -100,35 +100,51 @@ class TestGithubOrgClient(unittest.TestCase):
         "apache2_repos": TEST_PAYLOAD["apache2_repos"],
     }
 ])
-class TestIntegrationGithubOrgClient(TestCase):
+@parameterized_class([
+    {
+        "org_payload": TEST_PAYLOAD["org_payload"],
+        "repos_payload": TEST_PAYLOAD["repos_payload"],
+        "expected_repos": TEST_PAYLOAD["expected_repos"],
+        "apache2_repos": TEST_PAYLOAD["apache2_repos"],
+    }
+])
+class TestIntegrationGithubOrgClient(unittest.TestCase):
+    """Integration tests for GithubOrgClient using real logic but mocked HTTP."""
+
     @classmethod
     def setUpClass(cls):
-        """Start patching requests.get and simulate API responses."""
+        """Patch requests.get to return fixture payloads."""
         cls.get_patcher = patch("requests.get")
         mock_get = cls.get_patcher.start()
 
-        def side_effect(url):
-            if url == "https://api.github.com/orgs/google":
+        def side_effect(url, *args, **kwargs):
+            if url == cls.org_payload["url"]:  # likely something like .../orgs/google
                 return MagicMock(json=lambda: cls.org_payload)
-            elif url == "https://api.github.com/orgs/google/repos":
+            elif url == cls.repos_payload[0]["url"]:
+                # repos_payload is list of dicts with a "url" key maybe
                 return MagicMock(json=lambda: cls.repos_payload)
-            return None
+            else:
+                return MagicMock(json=lambda: [])
 
         mock_get.side_effect = side_effect
 
     @classmethod
     def tearDownClass(cls):
-        """Stop patching."""
+        """Stop patching requests.get."""
         cls.get_patcher.stop()
 
     def test_public_repos(self):
-        """Integration test for public_repos method."""
-        client = GithubOrgClient("google")
-        result = client.public_repos()
-        self.assertEqual(result, self.expected_repos)
+        """Integration test: public_repos should return expected_repos."""
+        client = GithubOrgClient(self.org_payload["login"])
+        self.assertEqual(client.public_repos(), self.expected_repos)
 
     def test_public_repos_with_license(self):
-        """Integration test for public_repos filtered by license."""
-        client = GithubOrgClient("google")
-        result = client.public_repos(license="apache-2.0")
-        self.assertEqual(result, self.apache2_repos)
+        """
+        Integration test: public_repos with license="apache-2.0"
+        should return only repos with that license.
+        """
+        client = GithubOrgClient(self.org_payload["login"])
+        self.assertEqual(
+            client.public_repos(license="apache-2.0"),
+            self.apache2_repos
+        )
