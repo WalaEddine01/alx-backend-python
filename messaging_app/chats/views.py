@@ -6,7 +6,7 @@ import django_filters.rest_framework
 from messaging_app.chats.filters import MessageFilter
 from django.shortcuts import get_object_or_404
 from .models import Conversation, Message
-from .serializers import MessageSerializer
+from .serializers import MessageSerializer, ConversationSerializer
 from .permissions import IsParticipantOfConversation
 
 class MessageViewSet(viewsets.ModelViewSet):
@@ -64,3 +64,40 @@ class MessageViewSet(viewsets.ModelViewSet):
                 {"error": "Conversation not found"},
                 status=status.HTTP_404_NOT_FOUND
             )
+        
+    class ConversationViewSet(viewsets.ModelViewSet):
+        queryset = Conversation.objects.all()
+        serializer_class = ConversationSerializer
+        permission_classes = [IsAuthenticated, IsParticipantOfConversation]
+
+        def create(self, request, *args, **kwargs):
+            users = request.data.get('users')
+            if not users or len(users) < 2:
+                return Response(
+                    {"error": "A conversation must include at least two users."},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+
+            serializer = self.get_serializer(data=request.data)
+            serializer.is_valid(raise_exception=True)
+            conversation = serializer.save()
+            conversation.users.set(users)
+            conversation.save()
+
+            return Response(
+                self.get_serializer(conversation).data,
+                status=status.HTTP_201_CREATED
+            )
+
+        def list(self, request, *args, **kwargs):
+            queryset = self.filter_queryset(self.get_queryset())
+            queryset = queryset.filter(users=request.user)
+            page = self.paginate_queryset(queryset)
+
+            if page is not None:
+                serializer = self.get_serializer(page, many=True)
+                return self.get_paginated_response(serializer.data)
+
+            serializer = self.get_serializer(queryset, many=True)
+            return Response(serializer.data)
+        
