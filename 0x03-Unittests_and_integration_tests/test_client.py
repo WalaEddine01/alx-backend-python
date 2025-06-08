@@ -3,6 +3,7 @@
 This module contains test cases
 """
 import unittest
+from unittest.mock import Mock, PropertyMock
 from utils import access_nested_map, get_json, memoize
 from typing import (
     Mapping,
@@ -35,3 +36,16 @@ class TestGithubOrgClient(unittest.TestCase):
         result = githuborgclient.org
         self.assertEqual(result, test_payload)
         mock_get.assert_called_once_with(f"https://api.github.com/orgs/{input}")
+
+    @parameterized.expand([("google", "https://api.github.com/orgs/google/repos"),
+                           ("abc", "https://api.github.com/orgs/abc/repos")])
+    def test_public_repos_url(self, org_name: tuple, repos_url: Any) -> None:
+        """
+        """
+        with patch.object(GithubOrgClient, 'GithubOrgClient.org ',
+                          new_callable=PropertyMock) as mock_prop:
+            mock_prop.return_value = repos_url
+            githuborgclient = GithubOrgClient(input)
+            result = githuborgclient._public_repos_url
+            self.assertEqual(result, repos_url)
+
