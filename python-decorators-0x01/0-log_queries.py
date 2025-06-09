@@ -24,6 +24,7 @@ def log_queries(function):
        """
        """
        print("Logging query")
+       print(kwargs)
        logging.info(args, kwargs)
        function(*args, **kwargs)
        print("query executed")
