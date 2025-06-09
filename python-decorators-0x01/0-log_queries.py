@@ -23,8 +23,10 @@ def log_queries(function):
    def wrapper(*args, **kwargs):
        """
        """
+       print("Logging query")
        logging.info(args, kwargs)
        function(*args, **kwargs)
+       print("query executed")
        
    return wrapper
        
