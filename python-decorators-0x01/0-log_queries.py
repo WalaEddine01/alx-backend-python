@@ -1,31 +1,30 @@
 #!/usr/bin/python3
 """
-This module I am applying decorators concept
-on logging Data base Queries
 """
 import sqlite3
 import functools
-from datetime import datetime
+import logging
 
 
-def log_queries(func):
-    """
-    A decorator that logs SQL queries before they are executed.
-    Logs include the query string and current timestamp.
-    """
-    @functools.wraps(func)
-    
-    def wrapper(*args, **kwargs):
-        try:
-            logs = {"query": kwargs.get("query"), 'Time': str(datetime.now())}
-            if not logs["query"]:
-                raise ValueError('Missing Query parameter')
-            print(logs)
-            return func(*args, **kwargs)
-        except Exception as e:
-            print(f"Error executing query: {str(e)}")
-            raise
-    return wrapper
+#### decorator to lof SQL queries
+logging.basicConfig(
+    level=logging.INFO,
+    filename="app.log",
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+)
+
+def log_queries(function):
+   """
+   """
+   @functools.wraps(function)
+   def wrapper(*args, **kwargs):
+       """
+       """
+       logging.info(args, kwargs)
+       function(*args, **kwargs)
+       
+   return wrapper
+       
 
 @log_queries
 def fetch_all_users(query):
@@ -36,5 +35,5 @@ def fetch_all_users(query):
     conn.close()
     return results
 
-
+#### fetch users while logging the query
 users = fetch_all_users(query="SELECT * FROM users")
