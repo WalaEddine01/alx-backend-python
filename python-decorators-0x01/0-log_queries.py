@@ -4,13 +4,16 @@
 import sqlite3
 import functools
 import logging
+from datetime import datetime
 
 
 #### decorator to lof SQL queries
+custom_prefix = datetime.now().strftime("%Y-%m-%d-%H:%M:%S")
+format_string = f'{custom_prefix} - %(levelname)s - %(message)s'
 logging.basicConfig(
     level=logging.INFO,
     filename="app.log",
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+    format=format_string
 )
 
 def log_queries(function):
