@@ -40,6 +40,6 @@ if __name__ == '__main__':
     print(type(port))
     with DatabaseConnection(user, password, database, host, port) as db:
         cursor = db.cursor()
-        cursor.execute("SELECT * FROM user_data LIMIT 100")
+        cursor.execute("SELECT * FROM users")
         x = cursor.fetchall()
         print(x)
