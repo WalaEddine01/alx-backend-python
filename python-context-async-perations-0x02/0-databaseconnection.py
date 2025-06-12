@@ -36,7 +36,10 @@ if __name__ == '__main__':
     user=getenv("MYSQL_USER")
     password=getenv("MYSQL_PASSWORD")
     database=getenv("MYSQL_DB")
-    
+
     print(type(port))
     with DatabaseConnection(user, password, database, host, port) as db:
-        print('db connected')
+        cursor = db.cursor()
+        cursor.execute("SELECT * FROM user_data LIMIT 100")
+        x = cursor.fetchall()
+        print(x)
