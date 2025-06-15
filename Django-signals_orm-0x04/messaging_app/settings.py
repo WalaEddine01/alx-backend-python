@@ -71,7 +71,6 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'corsheaders.middleware.CorsMiddleware',
-    'rest_framework.authentication.BasicAuthentication',
 ]
 
 ROOT_URLCONF = 'messaging_app.urls'
