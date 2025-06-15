@@ -14,12 +14,10 @@ from .models import Message
 def unread_messages_view(request):
     user = request.user
 
-    # ✅ Use custom manager and optimize with .only()
-    unread_messages = Message.unread_messages.unread_for_user(user)
+    unread = Message.unread.unread_for_user(user)
 
-    return render(request, 'messaging/unread_inbox.html', {
-        'messages': unread_messages
-    })
+    return render(request, 'messaging/unread.html', {'messages': unread})
+
 
 @login_required
 def delete_user(request):
