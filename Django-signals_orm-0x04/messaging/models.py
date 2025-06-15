@@ -3,12 +3,12 @@ from django.contrib.auth.models import User
 
 class Message(models.Model):
     sender = models.ForeignKey(User, on_delete=models.CASCADE, related_name='sent_messages')
-    receiver = models.ForeignKey(User, on_delete=models.CASCADE, related_name='received_messages')
-    content = models.TextField()
-    timestamp = models.DateTimeField(auto_now_add=True)
+    receiver = models.ForeignKey(User, on_delete=models.CASCADE, related_name='received_messages')  # required field
+    content = models.TextField()  # required field
+    timestamp = models.DateTimeField(auto_now_add=True)  # required field
 
     def __str__(self):
-        return f'Message from {self.sender} to {self.receiver}'
+        return f'Message from {self.sender.username} to {self.receiver.username}'
 
 class Notification(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='notifications')
@@ -17,4 +17,4 @@ class Notification(models.Model):
     is_read = models.BooleanField(default=False)
 
     def __str__(self):
-        return f'Notification for {self.user.username}'
+        return f'Notification for {self.user.username} - Message ID {self.message.id}'
