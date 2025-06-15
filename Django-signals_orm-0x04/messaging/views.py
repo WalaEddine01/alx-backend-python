@@ -15,9 +15,8 @@ def unread_messages_view(request):
     user = request.user
 
     unread_messages = Message.unread_messages.unread_for_user(user)
-    unread = Message.unread.unread_for_user(user)
 
-    return render(request, 'messaging/unread.html', {'messages': unread})
+    return render(request, 'messaging/unread.html', {'messages': unread_messages})
 
 
 @login_required
