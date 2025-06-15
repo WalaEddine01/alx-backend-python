@@ -6,6 +6,15 @@ from .models import Message
 from django.contrib.auth.decorators import login_required
 from django.db.models import Prefetch
 
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render
+from .models import Message
+
+@login_required
+def unread_messages_view(request):
+    user = request.user
+    unread_msgs = Message.unread_messages.unread_for_user(user)  # ✅ Custom manager
+    return render(request, 'messaging/unread_inbox.html', {'messages': unread_msgs})
 
 @login_required
 def delete_user(request):

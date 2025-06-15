@@ -1,0 +1,10 @@
+<h2>Unread Messages</h2>
+<ul>
+  {% for msg in messages %}
+    <li>
+      From: {{ msg.sender.username }}<br>
+      {{ msg.content }} <br>
+      <small>{{ msg.timestamp }}</small>
+    </li>
+  {% endfor %}
+</ul>
