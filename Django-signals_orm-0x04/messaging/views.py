@@ -15,7 +15,7 @@ def unread_messages_view(request):
     user = request.user
 
     unread_messages = Message.unread_messages.unread_for_user(user)
-    unread = Message.unread.unread_for_user(user)
+    unread = Message.unread.unread_for_user(user).only('id', 'content', 'timestamp')
 
     return render(request, 'messaging/unread.html', {'messages': unread})
 
