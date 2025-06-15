@@ -5,10 +5,16 @@ from django.shortcuts import render
 from .models import Message
 from django.contrib.auth.decorators import login_required
 from django.db.models import Prefetch
-
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 from .models import Message
+from django.views.decorators.cache import cache_page
+
+
+@cache_page(60)  # ✅ cache for 60 seconds
+def conversation_messages(request):
+    messages = Message.objects.all().order_by('-timestamp')
+    return render(request, 'chats/conversation.html', {'messages': messages})
 
 @login_required
 def unread_messages_view(request):
