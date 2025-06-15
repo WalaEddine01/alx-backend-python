@@ -49,6 +49,7 @@ REST_FRAMEWORK = {
 
 INSTALLED_APPS = [
     'django.contrib.admin',
+    'messaging.apps.MessagingConfig',  # use this to ensure signals are loaded
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
@@ -56,9 +57,10 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'corsheaders',
-    'chats',
     'rest_framework_simplejwt',
     'rest_framework.authtoken',
+    'django.contrib.admin',
+    'django.contrib.auth',
 ]
 CORS_ALLOW_ALL_ORIGINS = True
 
