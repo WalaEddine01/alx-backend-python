@@ -20,7 +20,7 @@ class User(models.Model):
 class Conversation(models.Model):
     """
     """
-    id = uuid4()
+    conversation_id = uuid4()
     name = models.CharField(max_length=100)
     users = models.ManyToManyField(User, related_name='converstaion')
     created_at = models.DateTimeField(auto_now_add=True)
