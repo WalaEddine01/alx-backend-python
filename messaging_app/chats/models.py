@@ -23,6 +23,7 @@ class Conversation(models.Model):
     conversation_id = uuid4()
     name = models.CharField(max_length=100)
     users = models.ManyToManyField(User, related_name='converstaion')
+    participants = models.CharField(max_length=100)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
