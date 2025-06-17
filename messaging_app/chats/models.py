@@ -20,7 +20,7 @@ class User(models.Model):
 class Conversation(models.Model):
     """
     """
-    conversation_id = uuid4()
+    conversation_id = models.UUIDField(primary_key=True, default=uuid4(), editable=False)
     name = models.CharField(max_length=100)
     users = models.ManyToManyField(User, related_name='converstaion')
     participants = models.CharField(max_length=100)
@@ -32,6 +32,7 @@ class Conversation(models.Model):
 class Message(models.Model):
     """
     """
+    message_id = models.UUIDField(primary_key=True, default=uuid4(), editable=False)
     Conversation = models.ForeignKey(Conversation, on_delete=models.CASCADE)
     sender = models.ForeignKey(User, on_delete=models.CASCADE)
     content = models.TextField()
