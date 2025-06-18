@@ -41,10 +41,12 @@ class MessageViewSet(viewsets.ModelViewSet):
     """
     queryset = Message.objects.all()
     serializer_class = MessageSerializer
-    filter_backends = [filters.SearchFilter]
-    search_fields = ['content']
 
-    def list(self, request, *args, **kwargs):
-        queryset = self.filter_queryset(self.get_queryset())
-        serializer = self.get_serializer(queryset, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+    def get_queryset(self):
+        """
+        Optionally filter messages by conversation ID.
+        """
+        conversation_id = self.kwargs.get('conversation_pk')
+        if conversation_id:
+            return self.queryset.filter(conversation__conversation_id=conversation_id)
+        return self.queryset

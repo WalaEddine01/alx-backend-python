@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'chats',
     'corsheaders',
+    'drf_yasg',
 ]
 
 MIDDLEWARE = [
