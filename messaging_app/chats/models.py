@@ -1,12 +1,11 @@
 from django.db import models
-from django.contrib.auth.models import User
 from uuid import uuid4
 
 
 class User(models.Model):
     '''
     '''
-    user_id = models.UUIDField(primary_key=True, default=uuid4(), editable=False)
+    user_id = models.UUIDField(primary_key=True, default=uuid4, editable=False)
     first_name = models.CharField(max_length=100)
     last_name = models.CharField(max_length=100)
     email = models.EmailField(max_length=100)
@@ -20,7 +19,7 @@ class User(models.Model):
 class Conversation(models.Model):
     """
     """
-    conversation_id = models.UUIDField(primary_key=True, default=uuid4(), editable=False)
+    conversation_id = models.UUIDField(primary_key=True, default=uuid4, editable=False)
     name = models.CharField(max_length=100)
     users = models.ManyToManyField(User, related_name='converstaion')
     created_at = models.DateTimeField(auto_now_add=True)

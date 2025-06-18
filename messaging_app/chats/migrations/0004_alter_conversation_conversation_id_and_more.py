@@ -7,18 +7,18 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('chats', '0001_initial'),
+        ('chats', '0003_alter_conversation_conversation_id_and_more'),
     ]
 
     operations = [
         migrations.AlterField(
             model_name='conversation',
             name='conversation_id',
-            field=models.UUIDField(default=uuid.UUID('b6c817fb-b855-464c-99e3-6f427990e56b'), editable=False, primary_key=True, serialize=False),
+            field=models.UUIDField(default=uuid.UUID('3cf386d9-7995-4db7-8ebd-2620f717977d'), editable=False, primary_key=True, serialize=False),
         ),
         migrations.AlterField(
             model_name='user',
             name='user_id',
-            field=models.UUIDField(default=uuid.UUID('52a02bc0-ecd8-44dc-8ec0-bd35bf79c793'), editable=False, primary_key=True, serialize=False),
+            field=models.UUIDField(default=uuid.UUID('fdb795ee-1e8d-4af0-af76-3bff6de872d4'), editable=False, primary_key=True, serialize=False),
         ),
     ]
