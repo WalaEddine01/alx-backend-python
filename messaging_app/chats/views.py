@@ -12,7 +12,7 @@ class UserViewSet(viewsets.ModelViewSet):
     """
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    permission_classes = [IsAuthenticated]  # Ensure only authenticated users can access
+    filter_backends = ["first_name", "last_name", "email"]
 
     def get_queryset(self):
         return self.queryset.order_by('first_name')
@@ -24,6 +24,7 @@ class ConversationViewSet(viewsets.ModelViewSet):
     """
     queryset = Conversation.objects.all()
     serializer_class = ConversationSerializer
+    search_fields = ['name']
 
     def get_queryset(self):
         return self.queryset.order_by('name')
@@ -35,6 +36,7 @@ class MessageViewSet(viewsets.ModelViewSet):
     """
     queryset = Message.objects.all()
     serializer_class = MessageSerializer
+    search_fields = ['content']
 
     def get_queryset(self):
         return self.queryset.order_by('sent_at')
