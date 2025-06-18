@@ -33,9 +33,13 @@ class Message(models.Model):
     """
     """
     message_id = models.UUIDField(primary_key=True, default=uuid4(), editable=False)
-    Conversation = models.ForeignKey(Conversation, on_delete=models.CASCADE)
+    Conversation = sender = models.ForeignKey(User, on_delete=models.CASCADE)
+    models.ForeignKey(Conversation, on_delete=models.CASCADE)
+    message_body = models.TextField()
     sender = models.ForeignKey(User, on_delete=models.CASCADE)
+    receiver = models.ForeignKey(User, on_delete=models.CASCADE)
     content = models.TextField()
+    sent_at = models.DateTimeField(auto_now_add=True)
     timestamp = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
