@@ -12,11 +12,14 @@ WORKDIR /app
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy all source code to the container
+# Copy source code
 COPY . .
 
 # Expose the Django port
 EXPOSE 8000
 
-# Run the Django app
+# Note: Port is exposed via Docker run command
+# Example: docker run -p 8000:8000 messaging_app_image ✅
+
+# Start the Django app
 CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
