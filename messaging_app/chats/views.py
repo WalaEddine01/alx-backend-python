@@ -18,10 +18,12 @@ class UserViewSet(viewsets.ModelViewSet):
     serializer_class = UserSerializer
     filter_backends = [filters.SearchFilter]
     search_fields = ['first_name', 'last_name', 'email']
-    permission_classes = [IsAuthenticated, IsSelf]
+    permission_classes = [IsSelf]
+    
 
     def get_queryset(self):
         return self.queryset.order_by('first_name')
+
     
 class ConversationViewSet(viewsets.ModelViewSet):
     """
@@ -32,7 +34,8 @@ class ConversationViewSet(viewsets.ModelViewSet):
     serializer_class = ConversationSerializer
     filter_backends = [filters.SearchFilter]
     search_fields = ['name']
-    permission_classes = [IsAuthenticated, InConversation]
+    permission_classes = [InConversation]
+    
 
     def list(self, request, *args, **kwargs):
         queryset = self.filter_queryset(self.get_queryset())
@@ -58,7 +61,7 @@ class MessageViewSet(viewsets.ModelViewSet):
     serializer_class = MessageSerializer
     filter_backends = [filters.SearchFilter]
     search_fields = ['content', 'sender__first_name', 'receiver__first_name']
-    permission_classes = [IsAuthenticated, IsSender]
+    
 
     def get_queryset(self):
         """
@@ -73,4 +76,11 @@ class MessageViewSet(viewsets.ModelViewSet):
         """
         if 'sender' in serializer.validated_data:
             raise serializers.ValidationError("Sender should not be provided in the request data.")
-        serializer.save(sender=self.request.user)
+
+        if serializer.validated_data.get('receiver') not in serializer.validated_data.get('conversation').users.all():
+            raise serializers.ValidationError("Receiver must be part of the conversation.")
+        
+        if serializer.validated_data.get('sender') == serializer.validated_data.get('receiver'):
+            raise serializers.ValidationError("Sender and receiver cannot be the same.")
+
+        serializer.save(sender=self.request.user)            

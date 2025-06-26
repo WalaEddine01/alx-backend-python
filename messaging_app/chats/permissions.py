@@ -21,6 +21,12 @@ class IsSelf(permissions.BasePermission):
     """
 
     def has_object_permission(self, request, view, obj):
+        # Allow access if the user superuser
+        if request.user.is_superuser:
+            return True
+        if request.method in permissions.SAFE_METHODS:
+            # Allow safe methods (GET, HEAD, OPTIONS) for the user object
+            return obj == request.user
         return obj == request.user
     
 class InConversation(permissions.BasePermission):

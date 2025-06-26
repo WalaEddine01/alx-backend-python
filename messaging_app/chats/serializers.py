@@ -30,7 +30,7 @@ class UserSerializer(serializers.ModelSerializer):
         if len(value) < 8:
             raise serializers.ValidationError("Phone number must be at least 8 digits long.")
         return value
-    
+
     def create(self, validated_data):
         """
         Override create method to hash the password before saving.
