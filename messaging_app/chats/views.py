@@ -4,6 +4,9 @@ from rest_framework.response import Response
 from .models import User, Conversation, Message
 from .serializers import UserSerializer, ConversationSerializer, MessageSerializer
 from rest_framework.permissions import IsAuthenticated
+from .permissions import IsSender, IsSelf, InConversation
+from django.db import models
+from rest_framework import serializers
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -15,6 +18,7 @@ class UserViewSet(viewsets.ModelViewSet):
     serializer_class = UserSerializer
     filter_backends = [filters.SearchFilter]
     search_fields = ['first_name', 'last_name', 'email']
+    permission_classes = [IsAuthenticated, IsSelf]
 
     def get_queryset(self):
         return self.queryset.order_by('first_name')
@@ -28,11 +32,22 @@ class ConversationViewSet(viewsets.ModelViewSet):
     serializer_class = ConversationSerializer
     filter_backends = [filters.SearchFilter]
     search_fields = ['name']
+    permission_classes = [IsAuthenticated, InConversation]
 
     def list(self, request, *args, **kwargs):
         queryset = self.filter_queryset(self.get_queryset())
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+    
+    def get_queryset(self):
+        user = self.request.user
+        return Conversation.objects.filter(users=user)
+
+    def perform_create(self, serializer):
+        conversation = serializer.save()
+        conversation.users.add(self.request.user)
+
+
     
 class MessageViewSet(viewsets.ModelViewSet):
     """
@@ -41,12 +56,21 @@ class MessageViewSet(viewsets.ModelViewSet):
     """
     queryset = Message.objects.all()
     serializer_class = MessageSerializer
+    filter_backends = [filters.SearchFilter]
+    search_fields = ['content', 'sender__first_name', 'receiver__first_name']
+    permission_classes = [IsAuthenticated, IsSender]
 
     def get_queryset(self):
         """
-        Optionally filter messages by conversation ID.
+        Override get_queryset to filter messages by the authenticated user.
         """
-        conversation_id = self.kwargs.get('conversation_pk')
-        if conversation_id:
-            return self.queryset.filter(conversation__conversation_id=conversation_id)
-        return self.queryset
+        user = self.request.user
+        return Message.objects.filter(sender=user) | Message.objects.filter(receiver=user)
+
+    def perform_create(self, serializer):
+        """
+        Override perform_create to set the sender automatically.
+        """
+        if 'sender' in serializer.validated_data:
+            raise serializers.ValidationError("Sender should not be provided in the request data.")
+        serializer.save(sender=self.request.user)
