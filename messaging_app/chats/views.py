@@ -18,7 +18,7 @@ class UserViewSet(viewsets.ModelViewSet):
     serializer_class = UserSerializer
     filter_backends = [filters.SearchFilter]
     search_fields = ['first_name', 'last_name', 'email']
-    permission_classes = [IsSelf]
+    permission_classes = [IsSelf, IsAuthenticated]
     
 
     def get_queryset(self):
@@ -34,7 +34,7 @@ class ConversationViewSet(viewsets.ModelViewSet):
     serializer_class = ConversationSerializer
     filter_backends = [filters.SearchFilter]
     search_fields = ['name']
-    permission_classes = [InConversation]
+    permission_classes = [InConversation, IsAuthenticated]
     
 
     def list(self, request, *args, **kwargs):
@@ -61,6 +61,7 @@ class MessageViewSet(viewsets.ModelViewSet):
     serializer_class = MessageSerializer
     filter_backends = [filters.SearchFilter]
     search_fields = ['content', 'sender__first_name', 'receiver__first_name']
+    permission_classes = [IsSender, IsAuthenticated]
     
 
     def get_queryset(self):
