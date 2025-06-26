@@ -4,7 +4,7 @@ from rest_framework.response import Response
 from .models import User, Conversation, Message
 from .serializers import UserSerializer, ConversationSerializer, MessageSerializer
 from rest_framework.permissions import IsAuthenticated
-from .permissions import IsSender, IsSelf, InConversation
+from .permissions import IsSender, IsSelf, IsParticipantOfConversation
 from django.db import models
 from rest_framework import serializers
 
@@ -34,7 +34,7 @@ class ConversationViewSet(viewsets.ModelViewSet):
     serializer_class = ConversationSerializer
     filter_backends = [filters.SearchFilter]
     search_fields = ['name']
-    permission_classes = [InConversation, IsAuthenticated]
+    permission_classes = [IsParticipantOfConversation, IsAuthenticated]
     
 
     def list(self, request, *args, **kwargs):

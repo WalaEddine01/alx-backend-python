@@ -29,7 +29,7 @@ class IsSelf(permissions.BasePermission):
             return obj == request.user
         return obj == request.user
     
-class InConversation(permissions.BasePermission):
+class IsParticipantOfConversation(permissions.BasePermission):
     """
     Custom permission to check if the user is part of the conversation.
     """
