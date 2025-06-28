@@ -1,0 +1,28 @@
+#!/bin/bash
+
+# Script: kubctl-0x02
+# Objective: Deploy blue and green versions, switch traffic, and check logs
+
+echo "🚀 Deploying BLUE version..."
+kubectl apply -f messaging_app/blue_deployment.yaml
+
+echo "🚀 Deploying GREEN version..."
+kubectl apply -f messaging_app/green_deployment.yaml
+
+echo "🔁 Deploying service routing to BLUE..."
+kubectl apply -f messaging_app/kubeservice.yaml
+
+echo "⏳ Waiting for pods to start..."
+sleep 10
+
+echo "📦 Verifying running pods:"
+kubectl get pods -l app=django
+
+echo "📄 Checking logs for GREEN deployment:"
+GREEN_POD=$(kubectl get pods -l version=green -o jsonpath="{.items[0].metadata.name}")
+kubectl logs "$GREEN_POD"
+
+echo "🟢 To switch traffic to GREEN, edit 'kubeservice.yaml' selector to:"
+echo "    version: green"
+echo "Then reapply with:"
+echo "    kubectl apply -f messaging_app/kubeservice.yaml"
