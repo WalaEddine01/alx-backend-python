@@ -19,6 +19,6 @@ spec:
     spec:
       containers:
       - name: django-container
-        image: your-django-image:blue  # Replace with actual image
+        image: messaging:2.0  # Replace with actual image
         ports:
         - containerPort: 8000
