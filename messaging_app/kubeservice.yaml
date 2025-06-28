@@ -5,7 +5,7 @@ metadata:
 spec:
   selector:
     app: django
-    version: blue  # Initial target is "blue"; change to "green" for switch
+    version: green  # Initial target is "blue"; change to "green" for switch
   ports:
   - port: 8000
     targetPort: 8000
