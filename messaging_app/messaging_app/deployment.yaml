@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: django-messaging-deployment
+  labels:
+    app: django-messaging
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: django-messaging
+  template:
+    metadata:
+      labels:
+        app: django-messaging
+    spec:
+      containers:
+      - name: django-messaging-container
+        image: your-django-image:latest  # 🔁 Replace with your actual image name
+        ports:
+        - containerPort: 8000
+        env:
+        - name: DEBUG
+          value: "1"
+        - name: SECRET_KEY
+          value: "your-secret-key"  # For testing only; use ConfigMaps/Secrets in production
+        - name: DATABASE_URL
+          value: "sqlite:///db.sqlite3"  # Or your actual DB connection string
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: django-messaging-service
+spec:
+  selector:
+    app: django-messaging
+  ports:
+    - protocol: TCP
+      port: 8000
+      targetPort: 8000
+  type: ClusterIP  # 🔐 Internal access only
