@@ -1,29 +1,36 @@
 pipeline {
     agent any
 
+    environment {
+        DOCKER_IMAGE = 'yourdockerhubusername/messaging_app:latest'
+    }
+
     stages {
-        stage('Checkout') {
+
+        stage('Checkout from GitHub') {
             steps {
-                // Checkout current branch from GitHub using Jenkins credentials
-                git credentialsId: 'github-credentials', 
+                // ✅ Clone code and show current branch
+                git credentialsId: 'github-credentials',
                     url: 'https://github.com/your-username/alx-backend-python.git'
-                sh 'git branch' // ✅ Required by checker
+                sh 'git branch'
             }
         }
 
-        stage('Install Dependencies') {
+        stage('Install dependencies') {
             steps {
+                // ✅ Install from messaging_app/requirements.txt using pip3
                 sh '''
                 cd messaging_app
                 python3 -m venv venv
                 source venv/bin/activate
-                pip3 install -r requirements.txt  # ✅ Required by checker
+                pip3 install -r requirements.txt
                 '''
             }
         }
 
-        stage('Run Tests') {
+        stage('Run tests') {
             steps {
+                // ✅ Run pytest and generate test report
                 sh '''
                 cd messaging_app
                 source venv/bin/activate
@@ -34,7 +41,32 @@ pipeline {
 
         stage('Generate Report') {
             steps {
+                // ✅ Archive the test report
                 junit 'messaging_app/test-results.xml'
+            }
+        }
+
+        stage('Build Docker Image') {
+            steps {
+                sh '''
+                cd messaging_app
+                docker build -t $DOCKER_IMAGE .
+                '''
+            }
+        }
+
+        stage('Push Docker Image to Docker Hub') {
+            steps {
+                withCredentials([usernamePassword(
+                    credentialsId: 'dockerhub',
+                    usernameVariable: 'DOCKER_USERNAME',
+                    passwordVariable: 'DOCKER_PASSWORD'
+                )]) {
+                    sh '''
+                    echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+                    docker push $DOCKER_IMAGE
+                    '''
+                }
             }
         }
     }
