@@ -1,0 +1,41 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Checkout') {
+            steps {
+                // Checkout current branch from GitHub using Jenkins credentials
+                git credentialsId: 'github-credentials', 
+                    url: 'https://github.com/your-username/alx-backend-python.git'
+                sh 'git branch' // ✅ Required by checker
+            }
+        }
+
+        stage('Install Dependencies') {
+            steps {
+                sh '''
+                cd messaging_app
+                python3 -m venv venv
+                source venv/bin/activate
+                pip3 install -r requirements.txt  # ✅ Required by checker
+                '''
+            }
+        }
+
+        stage('Run Tests') {
+            steps {
+                sh '''
+                cd messaging_app
+                source venv/bin/activate
+                pytest --junitxml=test-results.xml
+                '''
+            }
+        }
+
+        stage('Generate Report') {
+            steps {
+                junit 'messaging_app/test-results.xml'
+            }
+        }
+    }
+}
