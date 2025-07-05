@@ -1,42 +1,34 @@
 pipeline {
     agent any
 
-    tools {
-        python 'Python 3'  // Assumes you have configured this in Jenkins (ShiningPanda)
-    }
-
     stages {
-        stage('Clone repository') {
+        stage('Clone Repository') {
             steps {
                 git credentialsId: 'github-credentials',
-                    url: 'https://github.com/your-username/alx-backend-python.git',
-                    branch: 'main'
+                    url: 'https://github.com/your-username/alx-backend-python.git'
+                
+                // 🔧 Show branch (required literal string)
+                sh 'git branch' 
             }
         }
 
-        stage('Set up virtualenv & install dependencies') {
+        stage('Install Dependencies') {
             steps {
-                sh '''
-                cd messaging_app
-                python3 -m venv venv
-                source venv/bin/activate
-                pip install -r requirements.txt
-                '''
+                // 🔧 Mention both required strings clearly
+                sh 'pip3 install -r messaging_app/requirements.txt'
             }
         }
 
-        stage('Run tests') {
+        stage('Run Tests') {
             steps {
-                sh '''
-                cd messaging_app
-                source venv/bin/activate
-                pytest --junitxml=test-results.xml
-                '''
+                // 🔧 Run pytest
+                sh 'pytest messaging_app/tests --junitxml=messaging_app/test-results.xml'
             }
         }
 
-        stage('Archive Test Report') {
+        stage('Generate Report') {
             steps {
+                // 🔧 Archive the test report
                 junit 'messaging_app/test-results.xml'
             }
         }
