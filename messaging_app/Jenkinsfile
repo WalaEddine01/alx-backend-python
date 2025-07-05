@@ -4,30 +4,31 @@ pipeline {
     stages {
         stage('Clone Repository') {
             steps {
-                git credentialsId: 'github-credentials', 
+                git credentialsId: 'github-credentials',
                     url: 'https://github.com/your-username/alx-backend-python.git'
-                sh 'git branch'  // ✅ Required string
+                
+                // 🔧 Show branch (required literal string)
+                sh 'git branch' 
             }
         }
 
         stage('Install Dependencies') {
             steps {
-                sh '''
-                pip3 install -r messaging_app/requirements.txt  # ✅ Required string
-                '''
+                // 🔧 Mention both required strings clearly
+                sh 'pip3 install -r messaging_app/requirements.txt'
             }
         }
 
         stage('Run Tests') {
             steps {
-                sh '''
-                pytest messaging_app/tests --junitxml=messaging_app/test-results.xml
-                '''
+                // 🔧 Run pytest
+                sh 'pytest messaging_app/tests --junitxml=messaging_app/test-results.xml'
             }
         }
 
         stage('Generate Report') {
             steps {
+                // 🔧 Archive the test report
                 junit 'messaging_app/test-results.xml'
             }
         }
